@@ -1,0 +1,33 @@
+<html>
+<head>
+  <!-- <link rel="stylesheet" href="./node_modules/fomantic-ui-css/semantic.min.css" /> -->
+  <link rel="stylesheet" href="./node_modules/font-awesome/css/font-awesome.css" />
+  <link rel="stylesheet" href="./style.css?1" />
+  <script type="text/javascript" src="./node_modules/jquery/dist/jquery.min.js"></script>
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.4/semantic.min.js"></script> -->
+  <script type="text/javascript" src="./script.js?1"></script>
+</head>
+<body>
+  <div id="bg-main-infobox">
+    <h2 class="ui header">
+      Money $<span class="bg-money-value"></span><br/>
+      Stamina <span class="bg-stamina-value"></span><br/>
+      HP <span class="bg-hp-value"></span>/<span class="bg-max-hp-value"></span><br/>
+      Exp: <span class="bg-exp-value"></span>
+    </h2>
+    <div id="bg-skills"></div>
+  </div>
+  <div id="bg-main-log">
+    <div id="bg-log"></div>   
+  </div>
+  <div id="bg-main-map">
+    <div id="board" class="bg-map"></div>
+  </div>
+  <div id="bg-main-enemy">
+    <div id="bg-fight">
+      <h2>Enemy <u><span class="bg-enemy-name-value"></span></u> | HP: <span class="bg-enemy-hp-value"></span>/<span class="bg-enemy-max-hp-value"></span></h2>
+      <button onclick="fight()" class="ui primary button">hit</button>
+    </div>   
+  </div>
+</body>
+</html>

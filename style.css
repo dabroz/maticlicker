@@ -1,0 +1,87 @@
+body {
+  background: black;/* #eee;*/
+}
+h1 {
+  color: red !important;
+}
+:root {
+  --sidebar-size: 20%;
+  --tile-size: calc(16px * 5);/*64px;*/
+  --log-size: 12%;
+}
+.bg-visited-cell {
+  background: #ccc;
+}
+.bg-current-cell {
+  background: #fcc;
+  font-weight: bold;
+}
+
+#bg-main-infobox {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: var(--sidebar-size);
+  background: #aac;
+}
+
+#bg-main-log {
+  position: absolute;
+  left: var(--sidebar-size);
+  top:0;
+  right: 0;
+  height:var(--log-size);
+  background: #aaa;
+}
+
+#bg-main-map {
+  position: absolute;
+  left: var(--sidebar-size);
+  top:var(--log-size);
+  bottom:0;
+  /*right:20%;*/
+  width: calc(var(--tile-size) * 10);
+  /*background: #aca;*/
+}
+
+#bg-main-enemy {
+  position: absolute;
+  width: 20%;
+  right: 0;
+  top: var(--log-size);
+  bottom: 0;
+  background: #caa;
+}
+
+.bg-map {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.bg-cell {
+  position: relative;
+  width: var(--tile-size);
+  height: var(--tile-size);
+  background: url('./images/sprite5-0.png');
+  border: 1px solid black;
+  box-sizing: border-box;
+  /*background-size: cover;*/
+  /*image-rendering: pixelated;*/
+}
+
+.bg-current-cell-image {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: url('./images2/Soldier2.png');
+  background-size: cover;
+  image-rendering: pixelated;
+}
+
+.bg-not-visited-cell {
+  opacity: 10%;
+}
+
+.bg-available-cell {
+  opacity: 40%;
+}
