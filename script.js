@@ -44,7 +44,9 @@ function init() {
   saveStore.exp = 0;
   saveStore.skills = {
     endurance: 0,
-    strength: 0
+    strength: 0,
+    looting: 0,
+    autolooting: 0,
   }
 
   gameState = {};
@@ -67,6 +69,18 @@ function init() {
   }
   gameState.inFight = function() {
     return gameState.currentCell().hasEnemy();
+  }
+  gameState.canLoot = function() {
+    return gameState.currentCell().hasLoot();
+  }
+  gameState.grabLoot = function() {
+    gameState.currentCell().grabLoot();
+  }
+  gameState.currentLoot = function() {
+    return gameState.currentCell().lootInfo();
+  }
+  gameState.autoLoot = function() {
+    return gameState.currentCell().autoLoot();
   }
   gameState.currentEnemy = function() {
     return gameState.currentCell().enemy();
@@ -109,7 +123,9 @@ function init() {
   gameState.getSkills = function() {
     return {
       endurance: createSkill('endurance', 'fa-street-view'),
-      strength: createSkill('strength', 'fa-asl-interpreting')
+      strength: createSkill('strength', 'fa-asl-interpreting'),
+      looting: createSkill('looting', 'fa-book'),
+      autolooting: createSkill('autolooting', 'fa-angellist')
     }
   }
   postInit();
@@ -175,7 +191,7 @@ function postInit() {
           gameState.currentIndex = index;
           visited = true;
           if (!this.hasEnemy()) {
-            this.grabLoot();
+            //this.grabLoot();
           }
         },
         addLoot: function(newLoot) {
@@ -184,14 +200,42 @@ function postInit() {
         loot: function() {
           return loot;
         },
+        lootInfo: function() {
+          return "Loot: $" + loot.money.toFixed(1);
+        },
         hasLoot: function() { 
           return loot != null;
         },
+        autoLoot: function() {
+          if (!this.hasLoot()) return;
+          if (gameState.inFight()) return;
+
+          let value = gameState.getSkillLevel('autolooting') * 0.1;  
+         // value = Math.round(value * 10) / 10
+          if (value > 0) {
+            this._loot(value);
+          }
+        },
         grabLoot: function() {
           if (!this.hasLoot()) return;
-          gameState.log("You found $" + loot.money);
-          gameState.money += loot.money;
-          loot = null;
+          if (gameState.inFight()) {
+            gameState.log("Maybe deal with the dude that wants to kick your ass first?");
+            return;
+          }
+          let value = ( gameState.getSkillLevel('looting') + 1);
+          value = this._loot(value);
+          gameState.log("You found $" + value);
+        },
+        _loot: function(value) {
+          if (value > loot.money) {
+            value = loot.money;
+          }
+          gameState.money += value;
+          loot.money -= value;
+          if (loot.money == 0) {          
+            loot = null; 
+          }
+          return value;
         },
         spawnEnemy: function() {
           var _self = this;
@@ -222,7 +266,7 @@ function postInit() {
             kill: function() {
               gameState.log("You killed " + name + ", you bastard");
               enemy = null;
-              _self.grabLoot();
+              //_self.grabLoot();
               gameState.gainExp(1);
             }, 
             hit: function() {
@@ -312,6 +356,9 @@ function tick() {
       gameState.log(enemy.name + " hit you for " + hit + " HP");
     }
   }
+  if (gameState.canLoot()) {
+    gameState.autoLoot();
+  }
   gameState.stamina = Math.round(gameState.stamina * 100) / 100;
   gameState.hp = Math.round(gameState.hp * 100) / 100;
   render();
@@ -323,6 +370,22 @@ function fight() {
   var enemy = gameState.currentEnemy();
   enemy.hit();
   render();
+}
+
+function loot() {
+  if (!gameState.canLoot()) return;
+  gameState.grabLoot();  
+  render();
+}
+
+function renderLooting() {
+  if (gameState.canLoot()) {
+    $("#bg-loot").show();
+    $("#bg-loot-info").text(gameState.currentLoot());
+
+  } else {
+    $("#bg-loot").hide();
+  }
 }
 
 function updateFight() {
@@ -356,12 +419,13 @@ function updateSkills() {
 }
 
 function render() {
-  $(".bg-money-value").text(gameState.money);
+  $(".bg-money-value").text(gameState.money.toFixed(1));
   $(".bg-stamina-value").text(gameState.stamina);
   $(".bg-hp-value").text(gameState.hp);
   $(".bg-max-hp-value").text(gameState.maxHp);
   $(".bg-exp-value").text(gameState.getExp());
   updateBoard();
+  renderLooting();
   updateFight();
   updateSkills();
   if (gameState.hp <= 0) {
